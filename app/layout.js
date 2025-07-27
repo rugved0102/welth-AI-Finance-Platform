@@ -1,5 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/header";
+import { ClerkProvider } from '@clerk/nextjs';
 
 const inter = Inter({ subsets: ["latin"]})
 
@@ -10,12 +12,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <ClerkProvider>
+      <html lang="en">
       <body
         className={`${inter.className}`}
       >
         {/* header */}
-        <main>{children}</main>  
+        <Header/>
+        <main className="min-h-screen">{children}</main>  
         {/* this main tag is important for search engines to indentify which is the main content of our page */}
         {/* footer */}
         <footer className="bg-blue-50 py-12">
@@ -26,5 +30,6 @@ export default function RootLayout({ children }) {
         </footer>
       </body>
     </html>
+    </ClerkProvider>
   );
 }
