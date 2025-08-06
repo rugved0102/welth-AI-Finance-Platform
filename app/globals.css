@@ -120,3 +120,35 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .gradient {
+    background-image: linear-gradient(to bottom right, #2563eb, #9333ea); /* from-blue-600 to-purple-600 */
+  }
+
+  .gradient-title {
+    background-image: linear-gradient(to bottom right, #2563eb, #9333ea); /* from-blue-600 to-purple-600 */
+    font-weight: 800; /* font-extrabold */
+    letter-spacing: -0.05em; /* tracking-tighter */
+    padding-right: 0.5rem; /* pr-2 */
+    padding-bottom: 0.5rem; /* pb-2 */
+    color: transparent; /* text-transparent */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.hero-image-wrapper {
+  perspective: 1000px;
+}
+
+.hero-image {
+  transform: rotateX(15deg) scale(1);
+  transition: transform 0.5s ease-out;
+  will-change: transform;
+}
+
+.hero-image-scrolled {
+  transform: rotateX(0deg) scale(1) translateY(40px);
+}
