@@ -8,8 +8,9 @@ import TransactionTable from "../_components/transaction-table";
 // import { AccountChart } from "../_components/account-chart";
 
 export default async function AccountPage({ params }) {
-  const accountData = await getAccountWithTransactions(params.id);
-
+  // const accountData = await getAccountWithTransactions(params.id);
+  const { id } = await params; // 👈 await params
+  const accountData = await getAccountWithTransactions(id);
   if (!accountData) {
     notFound();
   }
@@ -40,11 +41,11 @@ export default async function AccountPage({ params }) {
       </div>
 
       {/* Chart Section */}
-      {/* <Suspense
+      <Suspense
         fallback={<BarLoader className="mt-4" width={"100%"} color="#9333ea" />}
       >
         <AccountChart transactions={transactions} />
-      </Suspense> */}
+      </Suspense>
 
       {/* Transactions Table */}
       <Suspense
