@@ -63,25 +63,6 @@ export function AccountChart({ transactions }) {
       (a, b) => new Date(a.date) - new Date(b.date)
     );
   }, [transactions, dateRange]);
-  // // Group
-  // const grouped = filtered.reduce((acc, t) => {
-  //   const dateObj = startOfDay(new Date(t.date));
-  //   const dateLabel = format(dateObj, "MMM dd");
-
-  //   if (!acc[dateLabel]) {
-  //     acc[dateLabel] = { dateObj, date: dateLabel, income: 0, expense: 0 };
-  //   }
-  //   if (t.type === "INCOME") {
-  //     acc[dateLabel].income += t.amount;
-  //   } else {
-  //     acc[dateLabel].expense += t.amount;
-  //   }
-  //   return acc;
-  // }, {});
-
-  // // Sort by real date object
-  // return Object.values(grouped).sort((a, b) => a.dateObj - b.dateObj).map(({dataObj, ...rest})=> rest);
-// }, [transactions, dateRange]);
 
   // Calculate totals for the selected period
   const totals = useMemo(() => {
@@ -93,7 +74,6 @@ export function AccountChart({ transactions }) {
       { income: 0, expense: 0 }
     );
   }, [filteredData]);
-  console.log(filteredData);
 
   return (
     <Card>
