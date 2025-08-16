@@ -11,21 +11,31 @@ import {
 import { Switch } from "@/components/ui/switch";
 
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import useFetch from "@/hooks/use-fetch";
 import { updateDefaultAccount } from "@/actions/account";
 import { toast } from "sonner";
+import { BarLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
 const AccountCard = ({ account }) => {
   const { name, type, balance, id, isDefault } = account;
-
+  const router = useRouter();
     const {
         loading: updateDefaultLoading,
         fn: updateDefaultFn,
         data: updatedAccount,
         error, 
     } = useFetch(updateDefaultAccount)
+
+    const [navLoading, setNavLoading] = useState(false);
+
+    const handleCardClick = (e) => {
+    e.preventDefault();
+    setNavLoading(true); // show loader
+    router.push(`/account/${id}`); // navigate
+  };
 
     const handleDefaultChange = async (event) => {
         event.preventDefault();
@@ -51,12 +61,26 @@ const AccountCard = ({ account }) => {
     }, [error])
 
   return (
-    <Card className={"hover:shadow-md transition-shadow group relative"}>
-      <Link href={`/account/${id}`}>
+    <Card className={"hover:shadow-md transition-shadow group relative cursor-pointer"}
+      onClick={handleCardClick}
+    >
+      {/* <Link href={`/account/${id}`}> */}
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium capitalize">{name}</CardTitle>
-          <Switch checked={isDefault} onClick = {handleDefaultChange}
-          disabled={updateDefaultLoading}/>
+
+           {(updateDefaultLoading || navLoading) ? ( // ✅ show loader if toggling OR navigating
+          <BarLoader color="#3b82f6" height={3} width={60} />
+        ) : (
+          <Switch
+            checked={isDefault}
+            onClick={handleDefaultChange}
+            disabled={updateDefaultLoading}
+          />
+        )}
+
+          {/* <Switch checked={isDefault} onClick = {handleDefaultChange}
+          disabled={updateDefaultLoading}/> */}
+
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
@@ -75,7 +99,7 @@ const AccountCard = ({ account }) => {
             <ArrowDownRight className="mr-1 h-4 w-4 text-red-500" /> Expense
           </div>
         </CardFooter>
-      </Link>
+      {/* </Link> */}
     </Card>
   );
 };
