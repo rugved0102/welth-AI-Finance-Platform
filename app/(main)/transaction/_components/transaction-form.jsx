@@ -19,11 +19,12 @@ import useFetch from "@/hooks/use-fetch";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, CloudCog } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import ReceiptScanner from "./recipt-scanner";
 
 const AddTransactionForm = ({ accounts, categories }) => {
 
@@ -82,10 +83,24 @@ const AddTransactionForm = ({ accounts, categories }) => {
     }
   }, [transactionResult, transactionLoading])
 
+   const handleScanComplete = (scannedData) => {
+    if (scannedData) {
+      setValue("amount", scannedData.amount.toString());
+      setValue("date", new Date(scannedData.date));
+      if (scannedData.description) {
+        setValue("description", scannedData.description);
+      }
+      if (scannedData.category) {
+        setValue("category", scannedData.category);
+      }
+      toast.success("Receipt scanned successfully");
+    }
+  };
+
   return (
     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       {/* AI Recipt Scanner */}
-
+      <ReceiptScanner onScanComplete={handleScanComplete} />
        {/* Type */}
       <div className="space-y-2">
         <label className="text-sm font-medium">Type</label>
@@ -262,13 +277,20 @@ const AddTransactionForm = ({ accounts, categories }) => {
         <Button
           type="button"
           variant="outline"
-          className="w-full"
+          className="flex-1"
           onClick={() => router.back()}
         >
           Cancel
         </Button>
-        <Button type="submit" className="w-full" disabled={transactionLoading}>
-          {/* {transactionLoading ? (
+        <Button
+        type="submit"
+        className="flex-1"
+        disabled={transactionLoading}
+        >
+          Create Transaction
+        </Button>
+        {/* <Button type="submit" className="w-full" disabled={transactionLoading}>
+          {transactionLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {editMode ? "Updating..." : "Creating..."}
@@ -277,8 +299,8 @@ const AddTransactionForm = ({ accounts, categories }) => {
             "Update Transaction"
           ) : (
             "Create Transaction"
-          )} */}
-        </Button>
+          )}
+        </Button> */}
       </div>
     </form>
   );
