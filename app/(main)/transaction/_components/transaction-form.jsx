@@ -1,12 +1,16 @@
 "use client";
 
-import { createTransaction } from "@/actions/transaction";
+import { createTransaction, updateTransaction } from "@/actions/transaction";
 import { transactionSchema } from "@/app/lib/schema";
 import CreateAccountDrawer from "@/components/create-account-drawer";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -19,16 +23,22 @@ import useFetch from "@/hooks/use-fetch";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, CloudCog } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { CalendarIcon, CloudCog, Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import ReceiptScanner from "./recipt-scanner";
 
-const AddTransactionForm = ({ accounts, categories }) => {
-
-  const router = useRouter()
+const AddTransactionForm = ({
+  accounts,
+  categories,
+  editMode = false,
+  initialData = null,
+}) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
   const {
     register,
     setValue,
@@ -39,21 +49,35 @@ const AddTransactionForm = ({ accounts, categories }) => {
     reset,
   } = useForm({
     resolver: zodResolver(transactionSchema),
-    defaultValues: {
-      type: "EXPENSE",
-      amount: "",
-      description: "",
-      accountId: accounts.find((ac) => ac.isDefault)?.id,
-      date: new Date(),
-      isRecurring: false,
-    },
+    defaultValues:
+      editMode && initialData
+        ? {
+             type: initialData.type,
+            amount: initialData.amount.toString(),
+            description: initialData.description,
+            accountId: initialData.accountId,
+            category: initialData.category,
+            date: new Date(initialData.date),
+            isRecurring: initialData.isRecurring,
+            ...(initialData.recurringInterval && {
+              recurringInterval: initialData.recurringInterval,
+            }),
+          }
+        : {
+            type: "EXPENSE",
+            amount: "",
+            description: "",
+            accountId: accounts.find((ac) => ac.isDefault)?.id,
+            date: new Date(),
+            isRecurring: false,
+          },
   });
 
   const {
     loading: transactionLoading,
     fn: transactionFn,
     data: transactionResult,
-  } = useFetch(createTransaction);
+  } = useFetch(editMode ? updateTransaction : createTransaction);
 
   // When you call watch("type"), you’re telling it: “Give me the current value of the form field whose name is "type".”
   const type = watch("type");
@@ -68,22 +92,28 @@ const AddTransactionForm = ({ accounts, categories }) => {
     const formData = {
       ...data,
       amount: parseFloat(data.amount),
+    };
 
+    if (editMode) {
+      transactionFn(editId, formData);
+    } else {
+      transactionFn(formData);
     }
-
-    transactionFn(formData)
-  }
+  };
 
   useEffect(() => {
-    if(transactionResult?.success && !transactionLoading) {
-      toast.success("Transaction created successfully");
-        reset();
-        router.push(`/account/${transactionResult.data.accountId}`)
-      
+    if (transactionResult?.success && !transactionLoading) {
+      toast.success(
+        editMode
+          ? "Transaction updated successfully"
+          : "Transaction created successfully"
+      );
+      reset();
+      router.push(`/account/${transactionResult.data.accountId}`);
     }
-  }, [transactionResult, transactionLoading])
+  }, [transactionResult, transactionLoading, editMode]);
 
-   const handleScanComplete = (scannedData) => {
+  const handleScanComplete = (scannedData) => {
     if (scannedData) {
       setValue("amount", scannedData.amount.toString());
       setValue("date", new Date(scannedData.date));
@@ -100,8 +130,8 @@ const AddTransactionForm = ({ accounts, categories }) => {
   return (
     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       {/* AI Recipt Scanner */}
-      <ReceiptScanner onScanComplete={handleScanComplete} />
-       {/* Type */}
+      {!editMode && <ReceiptScanner onScanComplete={handleScanComplete} />}
+      {/* Type */}
       <div className="space-y-2">
         <label className="text-sm font-medium">Type</label>
         <Select
@@ -121,7 +151,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
         )}
       </div>
 
-        {/* Amount and Account */}
+      {/* Amount and Account */}
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium">Amount</label>
@@ -166,7 +196,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
           )}
         </div>
       </div>
-      
+
       {/* Category */}
       <div className="space-y-2">
         <label className="text-sm font-medium">Category</label>
@@ -222,7 +252,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
           <p className="text-sm text-red-500">{errors.date.message}</p>
         )}
       </div>
-      
+
       {/* Description */}
       <div className="space-y-2">
         <label className="text-sm font-medium">Description</label>
@@ -282,14 +312,10 @@ const AddTransactionForm = ({ accounts, categories }) => {
         >
           Cancel
         </Button>
-        <Button
-        type="submit"
-        className="flex-1"
-        disabled={transactionLoading}
-        >
+        {/* <Button type="submit" className="flex-1" disabled={transactionLoading}>
           Create Transaction
-        </Button>
-        {/* <Button type="submit" className="w-full" disabled={transactionLoading}>
+        </Button> */}
+        <Button type="submit" className="flex-1 w-full" disabled={transactionLoading}>
           {transactionLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -300,7 +326,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
           ) : (
             "Create Transaction"
           )}
-        </Button> */}
+        </Button>
       </div>
     </form>
   );
