@@ -10,6 +10,10 @@ Gemini**, and **Arcjet**.
 
 ------------------------------------------------------------------------
 
+## Demo
+[![Watch Demo](https://img.shields.io/badge/Watch%20Demo-Video-blue?style=for-the-badge&logo=google-drive)](https://drive.google.com/file/d/1rq-5huxmxu3Q5DWLpi54dKvh2zyPhC7l/view?usp=sharing)
+
+------------------------------------------------------------------------
 ## ✨ Features
 
 -   🔐 **Authentication** -- Clerk-powered sign-in / sign-up with
