@@ -70,7 +70,7 @@ export default function Home() {
             What Our Users Say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonialsData.map((testimonial, index) => (
+            {/* {testimonialsData.map((testimonial, index) => (
               <Card key={index} className="p-6">
                 <CardContent className="pt-4">
                   <div className="flex items-center mb-4">
@@ -92,7 +92,70 @@ export default function Home() {
                   <p className="text-gray-600">{testimonial.quote}</p>
                 </CardContent>
               </Card>
-            ))}
+            ))} */}
+            <Card className="p-6">
+                <CardContent className="pt-4">
+                  <div className="flex items-center mb-4">
+                    <Image
+                      // src={testimonial.image}
+                      src={"https://images.unsplash.com/photo-1589571894960-20bbe2828d0a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aHVtYW58ZW58MHx8MHx8fDA%3D"}
+                      alt={"Amey Mahulkar"}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
+                    <div className="ml-4">
+                      <div className="font-semibold">{"Adele Jones"}</div>
+                      <div className="text-sm text-gray-600">
+                        {"Small Business Owner"}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-600">{"Welth has transformed how I manage my business finances. The AI insights have helped me identify cost-saving opportunities I never knew existed."}</p>
+                </CardContent>
+              </Card>
+              <Card className="p-6">
+                <CardContent className="pt-4">
+                  <div className="flex items-center mb-4">
+                    <Image
+                      // src={testimonial.image}
+                      src={"https://plus.unsplash.com/premium_photo-1671656349218-5218444643d8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8aHVtYW58ZW58MHx8MHx8fDA%3D"}
+                      alt={"Michael Chen"}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
+                    <div className="ml-4">
+                      <div className="font-semibold">{"Michael Chen"}</div>
+                      <div className="text-sm text-gray-600">
+                        {"Freelancer"}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-600">{"The receipt scanning feature saves me hours each month. Now I can focus on my work instead of manual data entry and expense tracking."}</p>
+                </CardContent>
+              </Card>
+              <Card className="p-6">
+                <CardContent className="pt-4">
+                  <div className="flex items-center mb-4">
+                    <Image
+                      // src={testimonial.image}
+                      src={"https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aHVtYW58ZW58MHx8MHx8fDA%3D"}
+                      alt={"Amey Mahulkar"}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
+                    <div className="ml-4">
+                      <div className="font-semibold">{"Emily Rodriguez"}</div>
+                      <div className="text-sm text-gray-600">
+                        {"Financial Advisor"}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-600">{"I recommend Welth to all my clients. The multi-currency support and detailed analytics make it perfect for international investors."}</p>
+                </CardContent>
+              </Card>
           </div>
         </div>
       </section>
